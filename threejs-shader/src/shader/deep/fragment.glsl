@@ -1,7 +1,12 @@
 precision lowp float;
 varying vec2 vUv;
 uniform float uTime;
-void main(){
+
+float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+void main() {
     // 通过顶点对应 uv 决定每个像素在uv图像的位置 通过 这个 x y 决定颜色
     // gl_FragColor = vec4(vUv, 0.0 ,1.0);
 
@@ -45,7 +50,6 @@ void main(){
     // strength = step(0.5 ,strength);
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
-
     //  16 利用绝对值
     // float strength = abs(vUv.x - 0.5);
     // gl_FragColor =vec4(strength,strength,strength,1);
@@ -64,9 +68,40 @@ void main(){
     // float strength = 1.0 - step(0.3,max(abs(vUv.x - 0.5)  , abs(vUv.y - 0.5)));
     // gl_FragColor =vec4(strength,strength,strength,1);
 
-
      // 21 利用取整，实现条纹渐变
-     float strength = floor(vUv.x * 10.0) / 10.0;
-    gl_FragColor =vec4(strength,strength,strength,1);
+    // float strength = floor(vUv.y * 10.0) / 10.0;
+    // gl_FragColor = vec4(strength, strength, strength, 1);
 
+    // 22 条纹相乘 实现渐变格子
+    // float strength = floor(vUv.x * 10.0) / 10.0 * floor(vUv.y * 10.0) / 10.0;
+    // gl_FragColor = vec4(strength, strength, strength, 1);
+
+    // 23 向上取整
+    // float strength = ceil(vUv.x * 10.0) / 10.0 * floor(vUv.y * 10.0) / 10.0;
+    // gl_FragColor = vec4(strength, strength, strength, 1);
+
+    // 24 随机效果
+    // float strength = random(vUv);
+    // gl_FragColor = vec4(strength, strength, strength, 1);
+
+     // 24 随机+ 格子效果
+    // float strength = ceil(vUv.x * 10.0) / 10.0 * ceil(vUv.y * 10.0) / 10.0;
+    // strength = random(vec2(strength, strength));
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // 25 依据 length 返回向量长度
+    // float strength = length(vUv);
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // 26 根据 distance 技术2个
+    // float strength = 1.0 - distance(vUv, vec2(0.5, 0.5));
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
+
+    // 27 根据 相除 实现星星
+    float strength = 0.15 / distance(vUv, vec2(0.5, 0.5)) - 1.0;
+    gl_FragColor = vec4(strength, strength, strength, strength);
+
+    // 28 
+    float strength = 0.15 / distance(vUv, vec2(0.5, 0.5)) - 1.0;
+    gl_FragColor = vec4(strength, strength, strength, strength);
 }
