@@ -24,7 +24,7 @@ const texture = textureLoader.load("./textures/ca.jpeg");
 
 // const material = new THREE.MeshBasicMaterial({ color: "#00ff00" });
 // 创建原始着色器材质
-const rawShaderMaterial = new THREE.RawShaderMaterial({
+const rawShaderMaterial = new THREE.ShaderMaterial({
   vertexShader: vertexShader,
   fragmentShader: fragmentShader,
   // wireframe: true,
@@ -45,7 +45,7 @@ const floor = new THREE.Mesh(
 console.log(floor);
 scene.add(floor);
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 window.document.body.appendChild(renderer.domElement);
 
