@@ -47,7 +47,26 @@ void main(){
 
 
     //  16 利用绝对值
-    float strength = abs(vUv.x - 0.5);
+    // float strength = abs(vUv.x - 0.5);
+    // gl_FragColor =vec4(strength,strength,strength,1);
+
+    // 17 最小值
+    // float strength = min(abs(vUv.x - 0.5)  , abs(vUv.y - 0.5));
+    // gl_FragColor =vec4(strength,strength,strength,1);
+    // 18 最小值
+    // float strength = 1.0 -  max(abs(vUv.x - 0.5)  , abs(vUv.y - 0.5));
+    // gl_FragColor =vec4(strength,strength,strength,1);
+
+    // 19 step
+    // float strength = step(0.3,max(abs(vUv.x - 0.5)  , abs(vUv.y - 0.5)));
+    // gl_FragColor =vec4(strength,strength,strength,1);
+
+    // float strength = 1.0 - step(0.3,max(abs(vUv.x - 0.5)  , abs(vUv.y - 0.5)));
+    // gl_FragColor =vec4(strength,strength,strength,1);
+
+
+     // 21 利用取整，实现条纹渐变
+     float strength = floor(vUv.x * 10.0) / 10.0;
     gl_FragColor =vec4(strength,strength,strength,1);
 
 }
