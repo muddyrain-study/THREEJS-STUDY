@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as dat from "dat.gui";
+const gui = new dat.GUI();
 
 // 顶点着色器
 import vertexShader from "../shader/deep/vertex.glsl";
@@ -24,6 +26,9 @@ const texture = textureLoader.load("./textures/ca.jpeg");
 
 // const material = new THREE.MeshBasicMaterial({ color: "#00ff00" });
 // 创建原始着色器材质
+const uParams = {
+  uScale: 0,
+};
 const rawShaderMaterial = new THREE.ShaderMaterial({
   vertexShader: vertexShader,
   fragmentShader: fragmentShader,
@@ -37,7 +42,15 @@ const rawShaderMaterial = new THREE.ShaderMaterial({
     uTexture: {
       value: texture,
     },
+    uScale: {
+      value: uParams.uScale,
+    },
   },
+});
+
+gui.add(uParams, "uScale", 0, 1, 0.1).onChange((value) => {
+  console.log(value);
+  rawShaderMaterial.uniforms.uScale.value = value;
 });
 const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(1, 1, 64, 64),
