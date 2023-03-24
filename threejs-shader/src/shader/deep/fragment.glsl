@@ -2,10 +2,18 @@ precision lowp float;
 varying vec2 vUv;
 uniform float uTime;
 
+// 随机函数
 float random(vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
 }
 
+// 旋转函数
+vec2 rotate(vec2 uv,float rotation,vec2 mid){
+    return vec2(
+        cos(rotation) * (uv.x - mid.x) + sin(rotation) * (uv.y - mid.y) + mid.x,
+        cos(rotation) * (uv.y - mid.y) - sin(rotation) * (uv.x - mid.x) + mid.y
+    );
+}
 void main() {
     // 通过顶点对应 uv 决定每个像素在uv图像的位置 通过 这个 x y 决定颜色
     // gl_FragColor = vec4(vUv, 0.0 ,1.0);
@@ -89,7 +97,7 @@ void main() {
     // strength = random(vec2(strength, strength));
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
-    // 25 依据 length 返回向量长度
+    // 25 依据 length 返回向量长度 
     // float strength = length(vUv);
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
@@ -98,10 +106,21 @@ void main() {
     // gl_FragColor = vec4(strength, strength, strength, 1.0);
 
     // 27 根据 相除 实现星星
-    float strength = 0.15 / distance(vUv, vec2(0.5, 0.5)) - 1.0;
-    gl_FragColor = vec4(strength, strength, strength, strength);
+    // float strength = 0.15 / distance(vUv, vec2(0.5, 0.5)) - 1.0;
+    // gl_FragColor = vec4(strength, strength, strength, strength);
 
-    // 28 
-    float strength = 0.15 / distance(vUv, vec2(0.5, 0.5)) - 1.0;
-    gl_FragColor = vec4(strength, strength, strength, strength);
-}
+    // 28 设置 vUv 水平或 竖直变量
+    // float strength = 0.15 / distance(vec2(vUv.x,(vUv.y - 0.5) * 5.0), vec2(0.5, 0.5)) - 0.5;
+    // gl_FragColor =  vec4(strength, strength, strength, strength);
+
+    // 29 十字交叉的星星
+    // float strength =  0.15 / distance(vec2(vUv.x,(vUv.y - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5)) - 1.0;
+    // strength +=  0.15 / distance(vec2(vUv.y,(vUv.x - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5)) - 1.0;
+    // gl_FragColor =  vec4(strength, strength, strength, strength);
+
+     // 29 旋转飞镖
+    vec2 rotateUv = rotate(vUv,3.14 * -uTime,vec2(0.5,0.5));
+    float strength =  0.15 / distance(vec2(rotateUv.x,(rotateUv.y - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5)) - 1.0;
+    strength +=  0.15 / distance(vec2(rotateUv.y,(rotateUv.x - 0.5) * 5.0 + 0.5), vec2(0.5, 0.5)) - 1.0;
+    gl_FragColor =  vec4(strength, strength, strength, strength);
+} 

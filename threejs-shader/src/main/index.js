@@ -28,6 +28,7 @@ const rawShaderMaterial = new THREE.ShaderMaterial({
   vertexShader: vertexShader,
   fragmentShader: fragmentShader,
   // wireframe: true,
+  colorWrite: true,
   side: THREE.DoubleSide,
   uniforms: {
     uTime: {
