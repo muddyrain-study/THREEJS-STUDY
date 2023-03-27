@@ -23,6 +23,12 @@ const params = {
   uXzScale: 1.5,
   uNoiseFrequency: 10.0,
   uNoiseScale: 1.5,
+  uLowColor: "#ff0000",
+  uHighColor: "#ffff00",
+  uXspeed: 1,
+  uZspeed: 1,
+  uNoiseSpeed: 1,
+  uOpacity: 1,
 };
 
 const shaderMaterial = new THREE.ShaderMaterial({
@@ -48,6 +54,24 @@ const shaderMaterial = new THREE.ShaderMaterial({
     },
     uTime: {
       value: params.uTime,
+    },
+    uXspeed: {
+      value: params.uXspeed,
+    },
+    uZspeed: {
+      value: params.uZspeed,
+    },
+    uNoiseSpeed: {
+      value: params.uNoiseSpeed,
+    },
+    uOpacity: {
+      value: params.uOpacity,
+    },
+    uLowColor: {
+      value: new THREE.Color(params.uLowColor),
+    },
+    uHighColor: {
+      value: new THREE.Color(params.uHighColor),
     },
   },
 });
@@ -93,6 +117,44 @@ gui
   .onChange((value) => {
     shaderMaterial.uniforms.uXzScale.value = value;
   });
+gui
+  .add(params, "uXspeed")
+  .min(1)
+  .max(5)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uXspeed.value = value;
+  });
+gui
+  .add(params, "uZspeed")
+  .min(1)
+  .max(5)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uZspeed.value = value;
+  });
+gui
+  .add(params, "uNoiseSpeed")
+  .min(1)
+  .max(5)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uNoiseSpeed.value = value;
+  });
+gui
+  .add(params, "uOpacity")
+  .min(0)
+  .max(1)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uOpacity.value = value;
+  });
+gui.addColor(params, "uLowColor").onChange((value) => {
+  shaderMaterial.uniforms.uLowColor.value = new THREE.Color(value);
+});
+gui.addColor(params, "uHighColor").onChange((value) => {
+  shaderMaterial.uniforms.uHighColor.value = new THREE.Color(value);
+});
 const plane = new THREE.Mesh(
   new THREE.PlaneGeometry(1, 1, 512, 512),
   shaderMaterial
