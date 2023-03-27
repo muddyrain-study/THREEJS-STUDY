@@ -1,6 +1,10 @@
 precision lowp float;
 uniform float uWaresFrequency;
 uniform float uScale;
+uniform float uXzScale;
+uniform float uNoiseFrequency;
+uniform float uNoiseScale;
+
 varying float vElevation;
 vec4 permute(vec4 x) {
     return mod(((x * 34.0) + 1.0) * x, 289.0);
@@ -42,8 +46,8 @@ float cnoise(vec2 P) {
 
 void main() {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    float elevation = sin(modelPosition.x * uWaresFrequency) * sin(modelPosition.z * uWaresFrequency);
-    elevation += cnoise(vec2(modelPosition.xz * 20.0));
+    float elevation = sin(modelPosition.x * uWaresFrequency) * sin(modelPosition.z * uWaresFrequency * uXzScale);
+    elevation += -abs(cnoise(vec2(modelPosition.xz * uNoiseFrequency)) * uNoiseScale);
     elevation *= uScale;
     modelPosition.y += elevation;
     vElevation = elevation;

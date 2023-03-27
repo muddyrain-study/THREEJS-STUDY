@@ -20,6 +20,9 @@ scene.add(camera);
 const params = {
   uWaresFrequency: 20,
   uScale: 0.1,
+  uXzScale: 1,
+  uNoiseFrequency: 10.0,
+  uNoiseScale: 0.1,
 };
 
 const shaderMaterial = new THREE.ShaderMaterial({
@@ -34,6 +37,15 @@ const shaderMaterial = new THREE.ShaderMaterial({
     uScale: {
       value: params.uScale,
     },
+    uNoiseFrequency: {
+      value: params.uNoiseFrequency,
+    },
+    uNoiseScale: {
+      value: params.uNoiseScale,
+    },
+    uXzScale: {
+      value: params.uXzScale,
+    },
   },
 });
 gui
@@ -43,6 +55,40 @@ gui
   .step(0.1)
   .onChange((value) => {
     shaderMaterial.uniforms.uWaresFrequency.value = value;
+  });
+
+gui
+  .add(params, "uScale")
+  .min(0)
+  .max(0.2)
+  .step(0.001)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uScale.value = value;
+  });
+
+gui
+  .add(params, "uNoiseFrequency")
+  .min(1)
+  .max(100)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uNoiseFrequency.value = value;
+  });
+gui
+  .add(params, "uNoiseScale")
+  .min(0)
+  .max(1)
+  .step(0.01)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uNoiseScale.value = value;
+  });
+gui
+  .add(params, "uXzScale")
+  .min(0)
+  .max(5)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uXzScale.value = value;
   });
 const plane = new THREE.Mesh(
   new THREE.PlaneGeometry(1, 1, 512, 512),
