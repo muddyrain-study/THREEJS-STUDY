@@ -18,11 +18,11 @@ camera.position.set(0, 5, 10);
 scene.add(camera);
 
 const params = {
-  uWaresFrequency: 20,
-  uScale: 0.1,
-  uXzScale: 1,
+  uWaresFrequency: 14,
+  uScale: 0.03,
+  uXzScale: 1.5,
   uNoiseFrequency: 10.0,
-  uNoiseScale: 0.1,
+  uNoiseScale: 1.5,
 };
 
 const shaderMaterial = new THREE.ShaderMaterial({
@@ -45,6 +45,9 @@ const shaderMaterial = new THREE.ShaderMaterial({
     },
     uXzScale: {
       value: params.uXzScale,
+    },
+    uTime: {
+      value: params.uTime,
     },
   },
 });
@@ -77,7 +80,7 @@ gui
 gui
   .add(params, "uNoiseScale")
   .min(0)
-  .max(1)
+  .max(5)
   .step(0.01)
   .onChange((value) => {
     shaderMaterial.uniforms.uNoiseScale.value = value;
@@ -114,6 +117,7 @@ scene.add(axesHelper);
 const clock = new THREE.Clock();
 function render() {
   let time = clock.getElapsedTime();
+  shaderMaterial.uniforms.uTime.value = time;
   renderer.render(scene, camera);
   controls.update();
   window.requestAnimationFrame(render);

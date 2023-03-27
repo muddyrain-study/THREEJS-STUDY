@@ -4,6 +4,7 @@ uniform float uScale;
 uniform float uXzScale;
 uniform float uNoiseFrequency;
 uniform float uNoiseScale;
+uniform float uTime;
 
 varying float vElevation;
 vec4 permute(vec4 x) {
@@ -47,9 +48,9 @@ float cnoise(vec2 P) {
 void main() {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
     float elevation = sin(modelPosition.x * uWaresFrequency) * sin(modelPosition.z * uWaresFrequency * uXzScale);
-    elevation += -abs(cnoise(vec2(modelPosition.xz * uNoiseFrequency)) * uNoiseScale);
+    elevation += -abs(cnoise(vec2(modelPosition.xz * uNoiseFrequency + uTime)) * uNoiseScale);
+    vElevation = elevation;
     elevation *= uScale;
     modelPosition.y += elevation;
-    vElevation = elevation;
     gl_Position = projectionMatrix * viewMatrix * modelPosition;
 }
