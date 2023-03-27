@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import vertexShader from "../shader/water/vertexShader.glsl";
 import fragmentShader from "../shader/water/fragmentShader.glsl";
+import * as dat from "dat.gui";
+
+const gui = new dat.GUI();
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
@@ -14,11 +17,33 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 5, 10);
 scene.add(camera);
 
+const params = {
+  uWaresFrequency: 20,
+  uScale: 0.1,
+};
+
 const shaderMaterial = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
+  side: THREE.DoubleSide,
+  transparent: true,
+  uniforms: {
+    uWaresFrequency: {
+      value: params.uWaresFrequency,
+    },
+    uScale: {
+      value: params.uScale,
+    },
+  },
 });
-
+gui
+  .add(params, "uWaresFrequency")
+  .min(1)
+  .max(100)
+  .step(0.1)
+  .onChange((value) => {
+    shaderMaterial.uniforms.uWaresFrequency.value = value;
+  });
 const plane = new THREE.Mesh(
   new THREE.PlaneGeometry(1, 1, 512, 512),
   shaderMaterial
