@@ -5,6 +5,7 @@ import fireworkVertex from "../shader/firework/vertex.glsl";
 import fireworkFragment from "../shader/firework/fragment.glsl";
 export default class Fireworks {
   constructor(color, to, from = { x: 0, y: 0, z: 0 }) {
+    this.color = new THREE.Color(color);
     // 创建烟花发射效果
     this.startGeometry = new THREE.BufferGeometry();
     const startPositionArray = new Float32Array(3);
@@ -38,6 +39,9 @@ export default class Fireworks {
         },
         uSize: {
           value: 20,
+        },
+        uColor: {
+          value: this.color,
         },
       },
     });
@@ -89,6 +93,9 @@ export default class Fireworks {
         },
         uSize: {
           value: 0,
+        },
+        uColor: {
+          value: this.color,
         },
       },
       transparent: true,
