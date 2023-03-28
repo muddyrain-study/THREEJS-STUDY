@@ -15,7 +15,11 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 // 设置相机位置
-camera.position.set(0, -5, 2);
+camera.position.set(0, 0, 20);
+// 更新摄像头
+camera.aspect = window.innerWidth / window.innerHeight;
+//   更新摄像机的投影矩阵
+camera.updateProjectionMatrix();
 scene.add(camera);
 
 // 创建环境纹理
@@ -74,16 +78,6 @@ controls.enableDamping = true;
 // 添加坐标轴辅助器
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
-// 设置时钟
-const clock = new THREE.Clock();
-function render() {
-  let time = clock.getElapsedTime();
-  renderer.render(scene, camera);
-  controls.update();
-  window.requestAnimationFrame(render);
-}
-
-render();
 
 // 监听画面变化，更新渲染画面
 window.addEventListener("resize", () => {
@@ -97,15 +91,15 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(window.devicePixelRatio);
 });
 
-window.addEventListener("dblclick", () => {
-  const fullScreenElement = document.fullscreenElement;
-  if (!fullScreenElement) {
-    // 双击控制屏幕进入全屏，退出全屏
-    renderer.domElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
-});
+// window.addEventListener("dblclick", () => {
+//   const fullScreenElement = document.fullscreenElement;
+//   if (!fullScreenElement) {
+//     // 双击控制屏幕进入全屏，退出全屏
+//     renderer.domElement.requestFullscreen();
+//   } else {
+//     document.exitFullscreen();
+//   }
+// });
 // 管理烟花
 let fireworks = [];
 // 设置创建烟花函数
@@ -113,8 +107,8 @@ let createFileworks = () => {
   let color = `hsl(${Math.floor(Math.random() * 360)},100%,80%)`;
   let position = {
     x: (Math.random() - 0.5) * 40,
-    z: (Math.random() - 0.5) * 40,
-    y: 10 + Math.random() * 25,
+    z: -(Math.random() - 0.5) * 40,
+    y: 3 + Math.random() * 15,
   };
   //  随机生成
   let firework = new Fireworks(color, position);
@@ -123,3 +117,17 @@ let createFileworks = () => {
 };
 
 window.addEventListener("click", createFileworks);
+
+// 设置时钟
+const clock = new THREE.Clock();
+function render() {
+  let time = clock.getElapsedTime();
+  controls.update();
+  fireworks.forEach((firework) => {
+    firework.update();
+  });
+  renderer.render(scene, camera);
+  window.requestAnimationFrame(render);
+}
+
+render();
