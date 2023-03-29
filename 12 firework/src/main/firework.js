@@ -109,6 +109,28 @@ export default class Fireworks {
       this.fireworkGeometry,
       this.fireworksMaterial
     );
+
+    this.listener = new THREE.AudioListener();
+
+    this.sound = new THREE.Audio(this.listener);
+    this.sendSound = new THREE.Audio(this.listener);
+
+    // 创建音频加载器
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load(
+      `./assets/audio/pow${Math.floor(Math.random() * 4 + 1)}.ogg`,
+      (buffer) => {
+        this.sound.setBuffer(buffer);
+        this.sound.setLoop(false);
+        this.sound.setVolume(Math.random());
+      }
+    );
+
+    audioLoader.load(`./assets/audio/send.mp3`, (buffer) => {
+      this.sendSound.setBuffer(buffer);
+      this.sendSound.setLoop(false);
+      this.sendSound.setVolume(0.05);
+    });
   }
   // 添加到场景
   addScene(scene, camera) {
@@ -119,6 +141,10 @@ export default class Fireworks {
   update() {
     const elapsedTime = this.clock.getElapsedTime();
     if (elapsedTime > 0.2 && elapsedTime < 1) {
+      if (!this.sendSound.isPlaying && !this.sendSoundPlay) {
+        this.sendSound.play();
+        this.sendSoundPlay = true;
+      }
       this.startMaterial.uniforms.uTime.value = elapsedTime;
       this.startMaterial.uniforms.uSize.value = 20;
     } else if (elapsedTime > 0.2) {
@@ -128,6 +154,11 @@ export default class Fireworks {
       this.startPoint.clear();
       this.startGeometry.dispose();
       this.startMaterial.dispose();
+
+      if (!this.sound.isPlaying && !this.play) {
+        this.sound.play();
+        this.play = true;
+      }
 
       // 设置定点显示
       this.fireworksMaterial.uniforms.uSize.value = 20;
