@@ -73,6 +73,20 @@ function init() {
   earthLabel.position.set(0, 1, 0);
   earth.add(earthLabel);
 
+  const moonDiv = document.createElement("div");
+  moonDiv.className = "label";
+  moonDiv.innerHTML = "月球";
+  const moonLabel = new CSS2DObject(moonDiv);
+  moonLabel.position.set(0, 0, 0);
+  moon.add(moonLabel);
+
+  const chinaDiv = document.createElement("div");
+  chinaDiv.className = "label";
+  chinaDiv.innerHTML = "中国";
+  const chinaLabel = new CSS2DObject(chinaDiv);
+  chinaLabel.position.set(-0.15, 0.85, -1);
+  earth.add(chinaLabel);
+
   // 渲染 css 2d 渲染器
   labelRenderer = new CSS2DRenderer();
   labelRenderer.setSize(window.innerWidth, window.innerHeight);
