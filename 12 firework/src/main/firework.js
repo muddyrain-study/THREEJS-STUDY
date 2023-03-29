@@ -133,9 +133,13 @@ export default class Fireworks {
       this.fireworksMaterial.uniforms.uSize.value = 20;
       this.fireworksMaterial.uniforms.uTime.value = time;
       if (time > 5) {
+        this.fireworksMaterial.uniforms.uSize.value = 20;
         this.fireworks.clear();
         this.fireworkGeometry.dispose();
         this.fireworksMaterial.dispose();
+        this.scene.remove(this.fireworks);
+        this.scene.remove(this.startPoint);
+        return "remove";
       }
     }
   }

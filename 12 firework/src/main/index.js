@@ -6,6 +6,8 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Fireworks from "./firework";
 import gsap from "gsap";
+import { Water } from "three/examples/jsm/objects/Water2";
+
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
@@ -30,16 +32,32 @@ rgbeLoader.loadAsync("./assets/2k.hdr").then((texture) => {
   scene.environment = texture;
 });
 const gltfLoader = new GLTFLoader();
+
 let lightBox = null;
+gltfLoader.load("./assets/model/newyears_min.glb", (gltf) => {
+  console.log(gltf);
+  scene.add(gltf.scene);
+
+  // 创建水面
+  const waterGeometry = new THREE.PlaneGeometry(100, 100);
+  const water = new Water(waterGeometry, {
+    scale: 4,
+    textureHeight: 1024,
+    textureWidth: 1024,
+  });
+  water.position.y = 1;
+  water.rotation.x = -Math.PI / 2;
+  scene.add(water);
+});
 gltfLoader.load("./assets/model/flyLight.glb", (gltf) => {
   lightBox = gltf.scene.children[0];
   lightBox.material = shaderMaterial;
 
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 100; i++) {
     let flyLight = gltf.scene.clone(true);
     let x = (Math.random() - 0.5) * 300;
     let z = (Math.random() - 0.5) * 300;
-    let y = Math.random() * 60 + 25;
+    let y = Math.random() * 40 + 15;
     flyLight.position.set(x, y, z);
     gsap.to(flyLight.rotation, {
       y: 2 * Math.PI,
@@ -123,8 +141,11 @@ const clock = new THREE.Clock();
 function render() {
   let time = clock.getElapsedTime();
   controls.update();
-  fireworks.forEach((firework) => {
-    firework.update();
+  fireworks.forEach((firework, i) => {
+    const type = firework.update();
+    if (type === "remove") {
+      fireworks.splice(i, 1);
+    }
   });
   renderer.render(scene, camera);
   window.requestAnimationFrame(render);
