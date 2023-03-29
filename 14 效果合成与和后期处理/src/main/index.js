@@ -125,4 +125,48 @@ gui.add(renderer, "toneMappingExposure", 0, 1, 0.1);
 gui.add(unrealBloomPass, "radius", 0, 1, 0.1);
 gui.add(unrealBloomPass, "strength", 0, 1, 0.1);
 
+const colorParams = {
+  r: 0,
+  g: 0,
+  b: 0,
+};
+gui.add(colorParams, "r", -1, 1, 0.1).onChange((value) => {
+  shaderPass.uniforms.uColor.value.r = value;
+});
+gui.add(colorParams, "g", -1, 1, 0.1).onChange((value) => {
+  shaderPass.uniforms.uColor.value.g = value;
+});
+gui.add(colorParams, "b", -1, 1, 0.1).onChange((value) => {
+  shaderPass.uniforms.uColor.value.b = value;
+});
+// 着色器渲染通道
+const shaderPass = new ShaderPass({
+  uniforms: {
+    tDiffuse: {
+      value: null,
+    },
+    uColor: {
+      value: new THREE.Color(colorParams.r, colorParams.g, colorParams.b),
+    },
+  },
+  vertexShader: `
+  varying vec2 vUv;
+  void main(){
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+  `,
+  fragmentShader: `
+  varying vec2 vUv;
+  uniform sampler2D tDiffuse;
+  uniform vec3 uColor;
+  void main(){
+    vec4 color = texture2D(tDiffuse,vUv);
+    color.xyz += uColor;
+    gl_FragColor =  vec4(color);
+  }
+  `,
+});
+
+effectComposer.addPass(shaderPass);
 render();
