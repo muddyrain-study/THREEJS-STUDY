@@ -86,6 +86,7 @@ gltfLoader.load("./models/DamagedHelmet/glTF/DamagedHelmet.gltf", (gltf) => {
 const clock = new THREE.Clock();
 function render() {
   let time = clock.getElapsedTime();
+  techPass.material.uniforms.uTime.value = time;
   controls.update();
   // renderer.render(scene, camera);
   effectComposer.render();
@@ -139,6 +140,47 @@ gui.add(colorParams, "g", -1, 1, 0.1).onChange((value) => {
 gui.add(colorParams, "b", -1, 1, 0.1).onChange((value) => {
   shaderPass.uniforms.uColor.value.b = value;
 });
+
+const normalTexture = textureLoader.load("./textures/interfaceNormalMap.png");
+const techPass = new ShaderPass({
+  uniforms: {
+    tDiffuse: {
+      value: null,
+    },
+    uNormalMap: {
+      value: null,
+    },
+    uTime: {
+      value: 0,
+    },
+  },
+  vertexShader: `
+  varying vec2 vUv;
+  void main(){
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+  `,
+  fragmentShader: `
+  varying vec2 vUv;
+  uniform sampler2D tDiffuse;
+  uniform sampler2D uNormalMap;
+  uniform float uTime;
+  void main(){
+    vec2 newUv = vUv;
+    newUv += sin(newUv.x * 10.0 + uTime) * 0.015;
+    vec4 color = texture2D(tDiffuse,newUv);
+    vec4 normalColor = texture2D(uNormalMap,vUv);
+    // 设置光线角度
+    vec3 lightDirection = normalize(vec3(-5.0,5.0,2));
+    float lightness = clamp(dot(normalColor.xyz,lightDirection),0.0,1.0);
+    color.xyz += lightness;
+    gl_FragColor =  vec4(color);
+  }
+  `,
+});
+techPass.material.uniforms.uNormalMap.value = normalTexture;
+effectComposer.addPass(techPass);
 // 着色器渲染通道
 const shaderPass = new ShaderPass({
   uniforms: {
