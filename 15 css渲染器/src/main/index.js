@@ -66,26 +66,28 @@ function init() {
   scene.add(moon);
 
   // 添加提示标签
-  const earthDiv = document.createElement("div");
+  earthDiv = document.createElement("div");
   earthDiv.className = "label";
   earthDiv.innerHTML = "地球";
-  const earthLabel = new CSS2DObject(earthDiv);
+  earthLabel = new CSS2DObject(earthDiv);
   earthLabel.position.set(0, 1, 0);
   earth.add(earthLabel);
 
-  const moonDiv = document.createElement("div");
+  moonDiv = document.createElement("div");
   moonDiv.className = "label";
   moonDiv.innerHTML = "月球";
-  const moonLabel = new CSS2DObject(moonDiv);
+  moonLabel = new CSS2DObject(moonDiv);
   moonLabel.position.set(0, 0, 0);
   moon.add(moonLabel);
 
+  // 中国
   const chinaDiv = document.createElement("div");
-  chinaDiv.className = "label";
+  chinaDiv.className = "label1";
   chinaDiv.innerHTML = "中国";
-  const chinaLabel = new CSS2DObject(chinaDiv);
-  chinaLabel.position.set(-0.15, 0.85, -1);
+  chinaLabel = new CSS2DObject(chinaDiv);
+  chinaLabel.position.set(-0.3, 0.5, -0.9);
   earth.add(chinaLabel);
+  console.log(chinaLabel);
 
   // 渲染 css 2d 渲染器
   labelRenderer = new CSS2DRenderer();
@@ -126,8 +128,27 @@ function animate() {
   const elapsed = clock.getElapsedTime();
 
   moon.position.set(Math.sin(elapsed) * 5, 0, Math.cos(elapsed) * 5);
+  const chinaPosition = chinaLabel.position.clone();
+  // 计算出标签跟摄像机的距离
+  const labelDistance = chinaPosition.distanceTo(camera.position);
+  // 检测射线的碰撞
+  chinaPosition.project(camera);
+  raycaster.setFromCamera(chinaPosition, camera);
 
+  const intersects = raycaster.intersectObjects(scene?.children, true);
+
+  // 如果没有碰撞到任何物体
+  if (intersects.length === 0) {
+    chinaLabel.element.classList.add("visible");
+  } else {
+    const minDistance = intersects[0].distance;
+    if (minDistance < labelDistance) {
+      chinaLabel.element.classList.remove("visible");
+    } else {
+      chinaLabel.element.classList.add("visible");
+    }
+  }
   // 标签渲染器渲染
-  labelRenderer.render(scene, camera);
   renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
 }
